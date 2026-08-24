@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>우리둘 - Couple Planner</title>
+<style>
+:root{--bg:#f7f5f2;--card:#fff;--text:#262321;--muted:#8b8580;--line:#eee9e5;--accent:#e97878;--accent2:#f6d6d3;--shadow:0 12px 30px rgba(55,38,30,.08)}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,"Noto Sans KR",Arial,sans-serif;color:var(--text)}
+.app{max-width:1100px;margin:auto;min-height:100vh;display:grid;grid-template-columns:220px 1fr}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:28px 18px;position:sticky;top:0;height:100vh}
+.logo{font-size:25px;font-weight:800;margin:0 0 35px}.logo span{color:var(--accent)}
+.nav button{width:100%;border:0;background:none;padding:13px 14px;text-align:left;border-radius:13px;margin:3px 0;color:#777;font-size:15px;cursor:pointer}
+.nav button.active,.nav button:hover{background:#fff0ef;color:#c85d5d;font-weight:700}
+.couple-mini{position:absolute;bottom:25px;left:18px;right:18px;background:#faf7f5;padding:14px;border-radius:16px}
+.avatars{display:flex;align-items:center;margin-bottom:8px}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f2d0cc;margin-right:-7px;border:3px solid #fff}.avatar:nth-child(2){background:#e6d8f2}
+.main{padding:28px 34px 100px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.eyebrow{color:var(--muted);font-size:13px}.title{font-size:27px;font-weight:800;margin:5px 0}.top-actions button,.ghost{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:12px;cursor:pointer}
+.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}.card{background:var(--card);border-radius:22px;padding:22px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.02)}
+.hero{background:linear-gradient(135deg,#fff,#fff1ef);position:relative;overflow:hidden}.hero:after{content:"♥";position:absolute;right:25px;top:20px;font-size:90px;color:rgba(233,120,120,.10)}
+.dplus{font-size:54px;font-weight:900;letter-spacing:-2px;margin:12px 0 2px}.sub{color:#777}.pill{display:inline-block;background:#fff;border:1px solid #f0dedd;color:#c95e5e;border-radius:999px;padding:7px 11px;font-size:12px;margin-top:14px}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:4px 0 14px}.section-title h2{font-size:17px;margin:0}.section-title button{border:0;background:none;color:#c85d5d;cursor:pointer}
+.event{display:flex;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.event:last-child{border-bottom:0}.time{width:62px;font-weight:800}.event-icon{width:40px;height:40px;border-radius:12px;background:#fff1ef;display:grid;place-items:center;margin-right:12px}.event small{color:#999}.right-stack{display:grid;gap:18px}
+.ai{background:#272322;color:white}.ai .muted{color:#c9c2bf}.ai .tag{display:inline-block;background:#49413e;border-radius:999px;padding:6px 9px;font-size:11px;margin-right:4px}.recommend{font-size:20px;font-weight:800;margin:14px 0 5px}.actions{display:flex;gap:8px;margin-top:15px}.actions button{flex:1;padding:10px;border-radius:11px;border:0;cursor:pointer;font-weight:700}.primary{background:var(--accent);color:#fff}.secondary{background:#f5eeeb;color:#5d5551}
+.wish-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.wish-item:last-child{border-bottom:0}.wish-icon{font-size:24px}.wish-text{flex:1}.wish-text small{display:block;color:#999;margin-top:3px}.heart{cursor:pointer;font-size:20px}
+.page{display:none}.page.active{display:block}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.day{min-height:74px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;cursor:pointer}.day:hover{border-color:#e9aaa8}.day.muted{color:#bbb;background:#fafafa}.day.today{outline:2px solid var(--accent)}.day b{font-size:12px}.mark{display:block;margin-top:8px;font-size:10px;color:#c85d5d;white-space:nowrap;overflow:hidden}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:13px}.field label{display:block;font-size:12px;color:#777;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;font:inherit}.field textarea{min-height:80px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);align-items:center;justify-content:center;padding:20px;z-index:10}.modal.show{display:flex}.modal-box{background:#fff;width:min(470px,100%);border-radius:22px;padding:24px}.modal-head{display:flex;justify-content:space-between}.close{border:0;background:none;font-size:22px;cursor:pointer}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#282321;color:#fff;padding:12px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:20}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:800px){.app{display:block}.sidebar{height:auto;position:sticky;top:0;z-index:5;border-right:0;border-bottom:1px solid var(--line);padding:12px 14px}.logo{margin:0 0 8px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;width:auto}.couple-mini{display:none}.main{padding:20px 15px 90px}.grid{grid-template-columns:1fr}.top{align-items:flex-start}.title{font-size:22px}.dplus{font-size:45px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo">우리<span>둘</span> ♥</div>
+  <nav class="nav">
+    <button class="active" data-page="home">🏠 홈</button>
+    <button data-page="calendar">📅 캘린더</button>
+    <button data-page="date">✨ 데이트</button>
+    <button data-page="my">👤 MY</button>
+  </nav>
+  <div class="couple-mini">
+    <div class="avatars"><div class="avatar">🙂</div><div class="avatar">😊</div></div>
+    <b>재동 & 우리</b><br><small style="color:#999">함께한 지 365일</small>
+  </div>
+</aside>
+
+<main class="main">
+  <div id="home" class="page active">
+    <header class="top"><div><div class="eyebrow">MONDAY, AUG 24</div><div class="title">오늘도 우리답게 💕</div></div><div class="top-actions"><button onclick="openModal()">＋ 일정</button></div></header>
+    <div class="grid">
+      <section class="card hero">
+        <div class="eyebrow">우리의 연애</div>
+        <div class="dplus" id="dday">D+365</div>
+        <div class="sub">오늘은 우리가 함께한 지 365일째예요.</div>
+        <div class="pill">🎉 다음 기념일 · 2주년까지 365일</div>
+      </section>
+      <section class="card">
+        <div class="section-title"><h2>다가오는 기념일</h2><button onclick="showPage('calendar')">전체보기</button></div>
+        <div class="event"><div class="event-icon">🎂</div><div><b>우리의 1주년</b><br><small>오늘</small></div></div>
+        <div class="event"><div class="event-icon">💕</div><div><b>200일</b><br><small>6일 후</small></div></div>
+      </section>
+      <section class="card">
+        <div class="section-title"><h2>📅 오늘의 일정</h2><button onclick="openModal()">+ 추가</button></div>
+        <div id="events">
+          <div class="event"><div class="time">19:00</div><div class="event-icon">🍝</div><div><b>저녁 데이트</b><br><small>성남동 · 예약 완료</small></div></div>
+          <div class="event"><div class="time">21:00</div><div class="event-icon">☕</div><div><b>카페 가기</b><br><small>근처 카페</small></div></div>
+        </div>
+      </section>
+      <section class="card ai">
+        <div class="section-title"><h2>✨ AI 오늘의 데이트</h2><span class="muted">맞춤 추천</span></div>
+        <span class="tag">☀️ 맑음</span><span class="tag">🚗 20분</span><span class="tag">₩₩</span>
+        <div class="recommend">태화강 산책 + 카페</div><div class="muted">오늘 날씨와 두 분의 저장 목록을 바탕으로 추천했어요.</div>
+        <div class="actions"><button class="secondary" onclick="toast('위시리스트에 저장했어요 ♥')">♡ 저장</button><button class="primary" onclick="openModal('데이트')">일정 추가</button></div>
+      </section>
+      <section class="card">
+        <div class="section-title"><h2>💕 우리의 위시리스트</h2><button onclick="showPage('date')">더보기</button></div>
+        <div class="wish-item"><div class="wish-icon">🏖️</div><div class="wish-text"><b>제주도 여행</b><small>여행 · 재동이 저장</small></div><div class="heart" onclick="toast('좋아요!')">♡</div></div>
+        <div class="wish-item"><div class="wish-icon">🍝</div><div class="wish-text"><b>파스타 맛집</b><small>맛집 · 둘 다 저장</small></div><div class="heart" onclick="toast('좋아요!')">♥</div></div>
+        <div class="wish-item"><div class="wish-icon">🎨</div><div class="wish-text"><b>도자기 만들기</b><small>활동 · 상대방 저장</small></div><div class="heart" onclick="toast('좋아요!')">♡</div></div>
+      </section>
+    </div>
+  </div>
+
+  <div id="calendar" class="page">
+    <header class="top"><div><div class="eyebrow">OUR CALENDAR</div><div class="title">우리의 일정 📅</div></div><button class="ghost" onclick="openModal()">＋ 일정 추가</button></header>
+    <section class="card">
+      <div class="section-title"><h2>2026년 8월</h2><span style="color:#999">♥ 함께 만드는 캘린더</span></div>
+      <div class="calendar" id="calendarGrid"></div>
+    </section>
+  </div>
+
+  <div id="date" class="page">
+    <header class="top"><div><div class="eyebrow">DATE IDEAS</div><div class="title">오늘 뭐 하지? ✨</div></div></header>
+    <div class="grid">
+      <section class="card ai"><h2>AI 추천</h2><div class="recommend">태화강 산책 + 카페</div><p class="muted">맑은 날씨에 딱 맞는 가벼운 저녁 데이트예요.</p><div class="actions"><button class="secondary" onclick="toast('저장했어요 ♥')">♡ 위시리스트</button><button class="primary" onclick="openModal('데이트')">일정으로 만들기</button></div></section>
+      <section class="card"><div class="section-title"><h2>💕 위시리스트</h2><button onclick="addWish()">＋ 추가</button></div><div id="wishList"></div></section>
+    </div>
+  </div>
+
+  <div id="my" class="page">
+    <header class="top"><div><div class="eyebrow">MY COUPLE</div><div class="title">우리 둘 설정</div></div></header>
+    <section class="card">
+      <div class="field"><label>커플 이름</label><input id="coupleName" value="재동 & 우리"></div>
+      <div class="field"><label>연애 시작일</label><input type="date" id="startDate" value="2025-08-24"></div>
+      <div class="field"><label>알림</label><select><option>모든 알림 받기</option><option>기념일만 받기</option><option>알림 끄기</option></select></div>
+      <button class="primary" style="border:0;padding:12px 18px;border-radius:11px" onclick="saveSettings()">저장하기</button>
+    </section>
+  </div>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box">
+  <div class="modal-head"><h2 id="modalTitle">일정 추가</h2><button class="close" onclick="closeModal()">×</button></div>
+  <div class="form-row"><div class="field"><label>날짜</label><input id="eventDate" type="date"></div><div class="field"><label>시간</label><input id="eventTime" type="time" value="19:00"></div></div>
+  <div class="field"><label>제목</label><input id="eventTitle" placeholder="예: 저녁 데이트"></div>
+  <div class="field"><label>장소</label><input id="eventPlace" placeholder="장소를 입력하세요"></div>
+  <div class="field"><label>메모</label><textarea id="eventMemo" placeholder="메모를 남겨보세요"></textarea></div>
+  <button class="primary" style="width:100%;border:0;padding:13px;border-radius:12px" onclick="addEvent()">저장하기</button>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));if(id==='calendar')renderCalendar();if(id==='date')renderWish();}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+function daysSince(dateStr){let s=new Date(dateStr+'T00:00:00'),n=new Date();n.setHours(0,0,0,0);return Math.floor((n-s)/86400000)}
+function updateDday(){let n=daysSince($('#startDate').value);$('#dday').textContent='D+'+n}
+function openModal(type='일정'){ $('#modalTitle').textContent=type==='데이트'?'데이트 일정 추가':'일정 추가';$('#eventDate').value=new Date().toISOString().slice(0,10);$('#modal').classList.add('show')}
+function closeModal(){$('#modal').classList.remove('show')}
+function addEvent(){let title=$('#eventTitle').value.trim()||'새로운 데이트';let time=$('#eventTime').value;let place=$('#eventPlace').value.trim()||'장소 미정';let el=document.createElement('div');el.className='event';el.innerHTML=`<div class="time">${time}</div><div class="event-icon">💕</div><div><b>${title}</b><br><small>${place}</small></div>`;$('#events').appendChild(el);closeModal();toast('일정이 추가됐어요 ♥');$('#eventTitle').value='';$('#eventPlace').value=''}
+function renderCalendar(){let g=$('#calendarGrid');g.innerHTML='';['일','월','화','수','목','금','토'].forEach(x=>{let d=document.createElement('div');d.style.cssText='text-align:center;color:#999;font-size:12px;padding:4px';d.textContent=x;g.appendChild(d)});let first=new Date(2026,7,1).getDay();for(let i=0;i<first;i++){let d=document.createElement('div');d.className='day muted';g.appendChild(d)}for(let i=1;i<=31;i++){let d=document.createElement('div');d.className='day';if(i===24)d.classList.add('today');d.innerHTML=`<b>${i}</b>`+(i===24?'<span class="mark">❤️ 1주년</span>':i===27?'<span class="mark">🎬 영화</span>':i===31?'<span class="mark">🎂 생일</span>':'');g.appendChild(d)}}
+let wishes=[['🏖️','제주도 여행','여행'],['🍝','파스타 맛집','맛집'],['🎨','도자기 만들기','활동']];
+function renderWish(){let w=$('#wishList');w.innerHTML=wishes.map((x,i)=>`<div class="wish-item"><div class="wish-icon">${x[0]}</div><div class="wish-text"><b>${x[1]}</b><small>${x[2]}</small></div><div class="heart" onclick="wishes.splice(${i},1);renderWish()">♡</div></div>`).join('')}
+function addWish(){let n=prompt('가고 싶은 장소나 데이트를 입력하세요');if(n){wishes.push(['✨',n,'커플 위시리스트']);renderWish();toast('위시리스트에 추가했어요 ♥')}}
+function saveSettings(){updateDday();toast('설정을 저장했어요')}
+function toast(t){let x=$('#toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
+updateDday();renderCalendar();
+</script>
+</body>
+</html>
